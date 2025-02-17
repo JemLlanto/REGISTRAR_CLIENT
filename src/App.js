@@ -5,7 +5,7 @@ import "react-bootstrap";
 
 // USER ROUTES
 import Index from "./pages/auth/Index";
-
+import Home from "./pages/user/Home";
 // ADMIN ROUTES
 
 const App = () => {
@@ -13,6 +13,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/Home" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );
