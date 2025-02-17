@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap";
 import "react-bootstrap";
+import "./layouts/style/style.css";
 
 // USER ROUTES
 import Index from "./pages/auth/Index";
