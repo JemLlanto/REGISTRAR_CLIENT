@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 
-const NavBar = () => {
+const SideBar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
     setShowSidebar((prev) => !prev);
   };
   return (
-    <div className={`navBar ${showSidebar ? "toggled" : ""}`}>
+    <div className={`SideBar ${showSidebar ? "toggled" : ""}`}>
       <button onClick={toggleSidebar}>show</button>
     </div>
   );
 };
 
-export default NavBar;
+export default SideBar;

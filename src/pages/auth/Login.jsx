@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import NavBar from "../../layouts/NavBar/NavBar";
+import SideBar from "../../layouts/SideBar/SideBar";
 
 const Login = ({ setActivePage }) => {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const Login = ({ setActivePage }) => {
   };
   return (
     <>
-      <NavBar></NavBar>
+      <SideBar></SideBar>
 
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div className="card p-4 shadow-sm" style={{ width: "25rem" }}>

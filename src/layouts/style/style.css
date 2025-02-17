@@ -1,10 +1,10 @@
-.navBar {
+.SideBar {
   background-color: blue;
   width: 5rem;
   color: white;
   transition: 0.3s;
 }
-.navBar.toggled {
+.SideBar.toggled {
   background-color: blue;
   width: 10rem;
   color: white;
