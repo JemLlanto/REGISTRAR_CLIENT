@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Register = ({ setActivePage }) => {
-  const [formData, setFormData] = useState({
+  const [inputs, setInputs] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -13,7 +14,7 @@ const Register = ({ setActivePage }) => {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -21,16 +22,16 @@ const Register = ({ setActivePage }) => {
     let validationErrors = {};
 
     // Validate input fields
-    if (!formData.firstName.trim())
+    if (!inputs.firstName.trim())
       validationErrors.firstName = "First name is required";
-    if (!formData.lastName.trim())
+    if (!inputs.lastName.trim())
       validationErrors.lastName = "Last name is required";
-    if (!formData.email.trim()) validationErrors.email = "Email is required";
-    if (!formData.password.trim())
+    if (!inputs.email.trim()) validationErrors.email = "Email is required";
+    if (!inputs.password.trim())
       validationErrors.password = "Password is required";
-    if (!formData.conPassword.trim())
+    if (!inputs.conPassword.trim())
       validationErrors.conPassword = "Confirm password is required";
-    if (formData.password !== formData.conPassword) {
+    if (inputs.password !== inputs.conPassword) {
       validationErrors.conPassword = "Passwords do not match";
     }
 
@@ -41,28 +42,17 @@ const Register = ({ setActivePage }) => {
 
     try {
       // Send data to backend
-      const response = await fetch("http://localhost:5000/registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.conPassword,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
-      }
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/registration",
+        inputs
+      );
 
       alert("Registration successful!");
       setActivePage("login"); // Redirect to login page after success
     } catch (error) {
-      setErrors({ general: error.message });
+      setErrors({
+        general: error.response?.data?.error || "Registration failed",
+      });
     }
   };
 
@@ -77,7 +67,7 @@ const Register = ({ setActivePage }) => {
               <input
                 type="text"
                 name="firstName"
-                value={formData.firstName}
+                value={inputs.firstName}
                 onChange={handleChange}
                 className="form-control"
               />
@@ -90,7 +80,7 @@ const Register = ({ setActivePage }) => {
               <input
                 type="text"
                 name="lastName"
-                value={formData.lastName}
+                value={inputs.lastName}
                 onChange={handleChange}
                 className="form-control"
               />
@@ -103,7 +93,7 @@ const Register = ({ setActivePage }) => {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
+                value={inputs.email}
                 onChange={handleChange}
                 className="form-control"
               />
@@ -116,7 +106,7 @@ const Register = ({ setActivePage }) => {
               <input
                 type="password"
                 name="password"
-                value={formData.password}
+                value={inputs.password}
                 onChange={handleChange}
                 className="form-control"
               />
@@ -129,12 +119,12 @@ const Register = ({ setActivePage }) => {
               <input
                 type="password"
                 name="conPassword"
-                value={formData.conPassword}
+                value={inputs.conPassword}
                 onChange={handleChange}
                 className="form-control"
               />
               {errors.email && (
-                <div className="text-danger small">{errors.password}</div>
+                <div className="text-danger small">{errors.conPassword}</div>
               )}
             </div>
             <button type="submit" className="btn btn-primary w-100">
