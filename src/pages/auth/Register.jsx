@@ -7,6 +7,7 @@ const Register = ({ setActivePage }) => {
     lastName: "",
     email: "",
     password: "",
+    conPassword: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -15,29 +16,53 @@ const Register = ({ setActivePage }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let validationErrors = {};
 
-    if (!formData.firstName.trim()) {
+    // Validate input fields
+    if (!formData.firstName.trim())
       validationErrors.firstName = "First name is required";
-    }
-    if (!formData.lastName.trim()) {
+    if (!formData.lastName.trim())
       validationErrors.lastName = "Last name is required";
-    }
-    if (!formData.email.trim()) {
-      validationErrors.email = "Email is required";
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
-    ) {
-      validationErrors.email = "Invalid email address";
+    if (!formData.email.trim()) validationErrors.email = "Email is required";
+    if (!formData.password.trim())
+      validationErrors.password = "Password is required";
+    if (!formData.conPassword.trim())
+      validationErrors.conPassword = "Confirm password is required";
+    if (formData.password !== formData.conPassword) {
+      validationErrors.conPassword = "Passwords do not match";
     }
 
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Form submitted", formData);
+    // If there are validation errors, return early
+    if (Object.keys(validationErrors).length > 0) return;
+
+    try {
+      // Send data to backend
+      const response = await fetch("http://localhost:5000/registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.conPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
       alert("Registration successful!");
+      setActivePage("login"); // Redirect to login page after success
+    } catch (error) {
+      setErrors({ general: error.message });
     }
   };
 
@@ -96,20 +121,20 @@ const Register = ({ setActivePage }) => {
                 className="form-control"
               />
               {errors.email && (
-                <div className="text-danger small">{errors.email}</div>
+                <div className="text-danger small">{errors.password}</div>
               )}
             </div>
             <div className="mb-3">
               <label className="form-label">Confirm Password</label>
               <input
                 type="password"
-                name="con-password"
-                value={formData.password}
+                name="conPassword"
+                value={formData.conPassword}
                 onChange={handleChange}
                 className="form-control"
               />
               {errors.email && (
-                <div className="text-danger small">{errors.email}</div>
+                <div className="text-danger small">{errors.password}</div>
               )}
             </div>
             <button type="submit" className="btn btn-primary w-100">
