@@ -8,7 +8,10 @@ const SideBar = () => {
   };
   return (
     <div className={`SideBar ${showSidebar ? "toggled" : ""}`}>
-      <button onClick={toggleSidebar}>show</button>
+      <h1>REGISTRAR</h1>
+      <button onClick={toggleSidebar} className="mt-5">
+        show
+      </button>
     </div>
   );
 };
