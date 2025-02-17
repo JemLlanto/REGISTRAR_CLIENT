@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import SideBar from "../../layouts/SideBar/SideBar";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ setActivePage }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let validationErrors = {};
 
@@ -24,18 +24,37 @@ const Login = ({ setActivePage }) => {
     ) {
       validationErrors.email = "Invalid email address";
     }
+    if (!formData.password) {
+      validationErrors.password = "Password is required";
+    }
 
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Form submitted", formData);
-      alert("Registration successful!");
+      try {
+        const response = await fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("token", data.token); // ✅ Store token
+          alert("Login successful!");
+          navigate("/Home"); // ✅ Redirect to Home
+        } else {
+          setErrors({ general: data.error });
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        setErrors({ general: "Something went wrong. Please try again." });
+      }
     }
   };
   return (
     <>
-      <SideBar></SideBar>
-
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div className="card p-4 shadow-sm" style={{ width: "25rem" }}>
           <h2 className="text-center mb-4">Login Page</h2>
@@ -54,20 +73,20 @@ const Login = ({ setActivePage }) => {
               )}
             </div>
             <div className="mb-3">
-              <label className="form-label">Email</label>
+              <label className="form-label">Password</label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="password"
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
                 className="form-control"
               />
               {errors.email && (
-                <div className="text-danger small">{errors.email}</div>
+                <div className="text-danger small">{errors.password}</div>
               )}
             </div>
             <button type="submit" className="btn btn-primary w-100">
-              Register
+              Login
             </button>
             <p>
               Register{" "}
